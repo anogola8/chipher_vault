@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f9; padding: 40px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 4px; text-decoration: none; font-size: 0.9em; cursor: pointer; }
+        .btn:hover { background: #0056b3; }
+        .btn-logout { background: #dc3545; }
+        .btn-logout:hover { background: #c82333; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .doc-title { font-size: 1.2em; font-weight: bold; margin-bottom: 5px; }
+        .doc-meta { color: #666; font-size: 0.9em; margin-bottom: 15px; }
+        .actions { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px; }
+        .add-recipient { display: flex; gap: 10px; margin-top: 10px; }
+        .add-recipient input { padding: 8px; border: 1px solid #ddd; border-radius: 4px; flex: 1; }
+        .msg { padding: 10px; background: #d4edda; color: #155724; border-radius: 4px; margin-bottom: 15px; }
+        .msg.error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>My Documents</h2>
+            <div>
+                Logged in as <b>{{ user.email }}</b> |
+                <a href="{% url 'logout' %}" class="btn btn-logout">Log out</a>
+            </div>
+        </div>
+
+        <a href="{% url 'upload_page' %}" class="btn" style="display: inline-block; margin-bottom: 20px;">+ Upload New Document</a>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="msg {% if message.tags == 'error' %}error{% endif %}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if not documents %}
+            <div class="card" style="text-align: center; color: #666;">
+                No documents yet. Click "Upload New Document" to get started.
+            </div>
+        {% endif %}
+
+        {% for doc in documents %}
+        <div class="card">
+            <div class="doc-title">{{ doc.title }}</div>
+            <div class="doc-meta">
+                ID: {{ doc.id }} |
+                Format: {{ doc.source_mime }}
+                {% if doc.converted_to_pdf %}(Converted to PDF){% endif %} |
+                Uploaded: {{ doc.created_at|date:"Y-m-d H:i" }}
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'download_cvault' doc.id %}" class="btn" style="background: #28a745;">Download .cvault</a>
+            </div>
+
+            <div class="add-recipient">
+                <form method="post" action="{% url 'add_recipient' doc.id %}" style="display: flex; width: 100%; gap: 10px;">
+                    {% csrf_token %}
+                    <input type="email" name="email" placeholder="Authorize email (e.g. recipient@example.com)" required>
+                    <button type="submit" class="btn" style="background: #6c757d;">Authorize Recipient</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

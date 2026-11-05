@@ -1,0 +1,6 @@
+PySide6>=6.12,<7
+PyMuPDF>=1.26,<2
+requests>=2.32,<3
+cryptography>=42.0.8,<46
+pytest>=8.2,<9
+requests-mock>=1.12,<2

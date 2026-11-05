@@ -1,0 +1,9 @@
+Django>=5.0,<5.2
+djangorestframework>=3.15,<3.17
+django-cors-headers>=4.3,<5
+cryptography>=42.0.8,<46
+python-dotenv>=1.0,<2
+pytest>=8.2,<9
+pytest-django>=4.8,<5
+# Postgres driver: add when switching off SQLite.
+# psycopg[binary]>=3.3.6,<4
